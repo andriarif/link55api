@@ -5,6 +5,31 @@ res.setHeader("Access-Control-Allow-Methods", "GET");
 
 try{
 
+/* GET ISSUE AKTIF */
+const issueResp = await fetch(
+"https://newapi.55lottertttapi.com/api/webapi/GetGameIssue",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+typeId:30,
+language:0,
+random:"166b81d9568e4123a83a2c7fdb80b7d9",
+signature:"5DB43C344C7381B72B5262FFB3572444",
+timestamp:1737252405
+})
+}
+);
+
+const issueJson =
+await issueResp.json();
+
+const currentIssue =
+issueJson?.data?.issueNumber;
+
+/* GET HISTORY RESULT */
 const resultResp = await fetch(
 "https://newapi.55lottertttapi.com/api/webapi/GetNoaverageEmerdList",
 {
@@ -30,7 +55,7 @@ await resultResp.json();
 const list =
 resultJson?.data?.list;
 
-if(!list || list.length < 2){
+if(!list || list.length < 1){
 
 return res.status(500).json({
 error:"Result tidak ditemukan"
@@ -38,24 +63,29 @@ error:"Result tidak ditemukan"
 
 }
 
-/* AMBIL RESULT FIX */
-const hasilData = list[1];
-
-const fullIssue =
-hasilData.issueNumber;
-
-const numberString =
-hasilData.number;
+/* RESULT TERAKHIR FIX */
+const latest =
+list[0];
 
 const hasil =
-parseInt(numberString);
+parseInt(latest.number);
 
 return res.status(200).json({
 
-periode:fullIssue.slice(-5),
-issue:fullIssue,
+/* PERIODE BERJALAN */
+periode:currentIssue,
+
+/* RESULT FIX */
+resultIssue:latest.issueNumber,
+
 hasil:hasil,
-number:numberString
+
+number:latest.number,
+
+status:
+hasil <= 4
+? "SMALL"
+: "BIG"
 
 });
 
