@@ -13,7 +13,7 @@ headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-typeId:30,
+typeId:1,
 language:0,
 random:"166b81d9568e4123a83a2c7fdb80b7d9",
 signature:"5DB43C344C7381B72B5262FFB3572444",
@@ -40,7 +40,7 @@ headers:{
 body:JSON.stringify({
 pageSize:10,
 pageNo:1,
-typeId:30,
+typeId:1,
 language:0,
 random:"b631eb26bac6403e99093913e5bb48c5",
 signature:"A6203E85132E5FE26B5F43DDF1ECDD07",
