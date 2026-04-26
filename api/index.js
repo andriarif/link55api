@@ -5,6 +5,10 @@ res.setHeader("Access-Control-Allow-Methods", "GET");
 
 try{
 
+/* =========================
+   GET ISSUE 1 MENIT
+========================= */
+
 const issueResp = await fetch(
 "https://newapi.55lottertttapi.com/api/webapi/GetGameIssue",
 {
@@ -24,14 +28,18 @@ timestamp:1737252405
 
 const issueJson = await issueResp.json();
 
+/* VALIDASI ISSUE */
+
 if(
 !issueJson ||
 !issueJson.data ||
 !issueJson.data.issueNumber
 ){
+
 return res.status(500).json({
 error:"Issue tidak ditemukan"
 });
+
 }
 
 const fullIssue =
@@ -39,6 +47,10 @@ issueJson.data.issueNumber;
 
 const periode =
 fullIssue.toString().slice(-5);
+
+/* =========================
+   GET RESULT
+========================= */
 
 const resultResp = await fetch(
 "https://newapi.55lottertttapi.com/api/webapi/GetNoaverageEmerdList",
@@ -50,7 +62,7 @@ headers:{
 body:JSON.stringify({
 pageSize:10,
 pageNo:1,
-typeId:1,
+typeId:60,
 language:0,
 random:"b631eb26bac6403e99093913e5bb48c5",
 signature:"A6203E85132E5FE26B5F43DDF1ECDD07",
@@ -64,6 +76,8 @@ await resultResp.json();
 
 const list =
 resultJson?.data?.list || [];
+
+/* JIKA LIST KOSONG */
 
 if(list.length === 0){
 
@@ -83,6 +97,10 @@ list[0]?.number || "0";
 
 const lastDigit =
 numberString.toString().split(",").pop();
+
+/* =========================
+   RETURN FINAL
+========================= */
 
 return res.status(200).json({
 
