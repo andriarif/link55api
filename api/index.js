@@ -13,7 +13,7 @@ headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-typeId:1,
+typeId:60,
 language:0,
 random:"166b81d9568e4123a83a2c7fdb80b7d9",
 signature:"5DB43C344C7381B72B5262FFB3572444",
