@@ -5,53 +5,6 @@ res.setHeader("Access-Control-Allow-Methods", "GET");
 
 try{
 
-/* =========================
-   GET ISSUE REAL 30 DETIK
-========================= */
-
-const issueResp = await fetch(
-"https://newapi.55lottertttapi.com/api/webapi/GetGameIssue",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-typeId:30,
-language:0,
-random:"166b81d9568e4123a83a2c7fdb80b7d9",
-signature:"5DB43C344C7381B72B5262FFB3572444",
-timestamp:1737252405
-})
-}
-);
-
-const issueJson = await issueResp.json();
-
-/* VALIDASI */
-
-if(
-!issueJson ||
-!issueJson.data ||
-!issueJson.data.issueNumber
-){
-
-return res.status(500).json({
-error:"Issue tidak ditemukan"
-});
-
-}
-
-const fullIssue =
-issueJson.data.issueNumber;
-
-const periode =
-fullIssue.toString().slice(-5);
-
-/* =========================
-   GET RESULT REAL
-========================= */
-
 const resultResp = await fetch(
 "https://newapi.55lottertttapi.com/api/webapi/GetNoaverageEmerdList",
 {
@@ -75,38 +28,33 @@ const resultJson =
 await resultResp.json();
 
 const list =
-resultJson?.data?.list || [];
+resultJson?.data?.list;
 
-/* JIKA LIST KOSONG */
+if(!list || list.length < 2){
 
-if(list.length === 0){
-
-return res.status(200).json({
-
-periode,
-issue:fullIssue,
-hasil:0,
-number:"0"
-
+return res.status(500).json({
+error:"Result tidak ditemukan"
 });
 
 }
 
+/* AMBIL RESULT FIX */
+const hasilData = list[1];
+
+const fullIssue =
+hasilData.issueNumber;
+
 const numberString =
-list[0]?.number || "0";
+hasilData.number;
 
-const lastDigit =
-numberString.toString().split(",").pop();
-
-/* =========================
-   RETURN FINAL
-========================= */
+const hasil =
+parseInt(numberString);
 
 return res.status(200).json({
 
-periode,
+periode:fullIssue.slice(-5),
 issue:fullIssue,
-hasil:parseInt(lastDigit),
+hasil:hasil,
 number:numberString
 
 });
