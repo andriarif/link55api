@@ -24,6 +24,16 @@ timestamp:1737252405
 
 const issueJson = await issueResp.json();
 
+if(
+!issueJson ||
+!issueJson.data ||
+!issueJson.data.issueNumber
+){
+return res.status(500).json({
+error:"Issue tidak ditemukan"
+});
+}
+
 const fullIssue =
 issueJson.data.issueNumber;
 
@@ -53,13 +63,26 @@ const resultJson =
 await resultResp.json();
 
 const list =
-resultJson.data.list;
+resultJson?.data?.list || [];
+
+if(list.length === 0){
+
+return res.status(200).json({
+
+periode,
+issue:fullIssue,
+hasil:0,
+number:"0"
+
+});
+
+}
 
 const numberString =
-list[0].number;
+list[0]?.number || "0";
 
 const lastDigit =
-numberString.split(",").pop();
+numberString.toString().split(",").pop();
 
 return res.status(200).json({
 
