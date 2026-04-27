@@ -20,7 +20,7 @@ body:JSON.stringify({
 
 /* WINGO 1 MENIT */
 
-typeId:30,
+typeId:1,
 
 language:0,
 
@@ -65,7 +65,7 @@ pageNo:1,
 
 /* WINGO 1 MENIT */
 
-typeId:30,
+typeId:1,
 
 language:0,
 
