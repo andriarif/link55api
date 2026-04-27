@@ -5,93 +5,120 @@ res.setHeader("Access-Control-Allow-Methods", "GET");
 
 try{
 
-const response = await fetch(
-"https://api.55fiveapi.com/api/webapi/GetNoaverageEmerdList",
+/* ================= GET ISSUE AKTIF ================= */
+
+const issueResp = await fetch(
+"https://newapi.55lottertttapi.com/api/webapi/GetGameIssue",
 {
 method:"POST",
 
 headers:{
-
-"Content-Type":"application/json;charset=UTF-8",
-
-"Accept":"application/json, text/plain, */*",
-
-"Authorization":
-"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOiIxNzc3Mjk3Njk2IiwibmJmIjoiMTc3NzI5NzY5NiIsImV4cCI6IjE3NzcyOTk0OTYiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL2V4cGlyYXRpb24iOiI0LzI3LzIwMjYgOToxODoxNiBQTSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFjY2Vzc19Ub2tlbiIsIlVzZXJJZCI6IjEwOTY4NjMiLCJVc2VyTmFtZSI6IjYyODk1NDE0MzcwMTYyIiwiVXNlclBob3RvIjoiOSIsIk5pY2tOYW1lIjoiQW5kcmlwZWRpYSIsIkFtb3VudCI6IjMwLjQwIiwiSW50ZWdyYWwiOiIwIiwiTG9naW5NYXJrIjoiSDUiLCJMb2dpblRpbWUiOiI0LzI3LzIwMjYgODo0ODoxNiBQTSIsIkxvZ2luSVBBZGRyZXNzIjoiMTAzLjE2Ni45Mi4xOTgiLCJEYk51bWJlciI6IjAiLCJJc3ZhbGlkYXRvciI6IjAiLCJLZXlDb2RlIjoiMzAxNSIsIlRva2VuVHlwZSI6IkFjY2Vzc19Ub2tlbiIsIlBob25lVHlwZSI6IjEiLCJVc2VyVHlwZSI6IjAiLCJVc2VyTmFtZTIiOiJhbmRyaXBlZGlhOTBAZ21haWwuY29tIiwiaXNzIjoiand0SXNzdWVyIiwiYXVkIjoibG90dGVyeVRpY2tldCJ9.XWyroCj2s587J-QdApaGvyUQwxng8wLoNeG4EbbVWAQ",
-
-"Ar-Origin":"https://www.lopmiva.com"
-
+"Content-Type":"application/json"
 },
 
 body:JSON.stringify({
 
-pageSize:10,
-pageNo:1,
+/* WINGO 30 DETIK */
 
-/* WINGO 1 MENIT */
-typeId:1,
+typeId:30,
 
-language:1,
+language:0,
 
-random:
-Math.random().toString(36).substring(2),
+random:"166b81d9568e4123a83a2c7fdb80b7d9",
 
 signature:
-"1F7A8D9E698F3155CB0E447679B1F5AD",
+"5DB43C344C7381B72B5262FFB3572444",
 
-timestamp:
-Math.floor(Date.now()/1000)
+timestamp:1737252405
 
 })
 
 }
 );
 
-const data =
-await response.json();
+const issueJson =
+await issueResp.json();
 
-const latest =
-data?.data?.list?.[0];
+const currentIssue =
+issueJson?.data?.issueNumber;
 
-if(!latest){
+/* ================= GET RESULT HISTORY ================= */
+
+const resultResp = await fetch(
+"https://newapi.55lottertttapi.com/api/webapi/GetNoaverageEmerdList",
+{
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+pageSize:10,
+
+pageNo:1,
+
+/* WINGO 30 DETIK */
+
+typeId:30,
+
+language:0,
+
+random:"b631eb26bac6403e99093913e5bb48c5",
+
+signature:
+"A6203E85132E5FE26B5F43DDF1ECDD07",
+
+timestamp:1737252405
+
+})
+
+}
+);
+
+const resultJson =
+await resultResp.json();
+
+const list =
+resultJson?.data?.list;
+
+if(!list || list.length < 1){
 
 return res.status(500).json({
 
-success:false,
-error:"Data tidak ditemukan"
+error:"Result tidak ditemukan"
 
 });
 
 }
+
+/* ================= RESULT TERBARU ================= */
+
+const latest =
+list[0];
 
 const hasil =
 parseInt(latest.number);
 
 return res.status(200).json({
 
-success:true,
+/* PERIODE BERJALAN */
 
-periode:
-latest.issueNumber,
+periode:currentIssue,
+
+/* RESULT TERAKHIR */
+
+resultIssue:latest.issueNumber,
 
 hasil:hasil,
 
-number:
-latest.number,
+number:latest.number,
 
 status:
 hasil <= 4
 ? "SMALL"
-: "BIG",
-
-warna:
-latest.colour,
-
-premium:
-latest.premium,
-
-serverTime:
-Date.now()
+: "BIG"
 
 });
 
@@ -99,8 +126,9 @@ Date.now()
 
 return res.status(500).json({
 
-success:false,
-error:err.toString()
+error:"Server Error",
+
+detail:err.message
 
 });
 
