@@ -99,16 +99,21 @@ list.length < 1
 
 return res.status(500).json({
 
+success:false,
 error:"Result tidak ditemukan"
 
 });
 
 }
 
-/* ================= RESULT TERBARU ================= */
+/* ================= RESULT FIX ================= */
 
 const latest =
-list[0];
+list.find(
+x =>
+String(x.issueNumber).trim()
+!== currentIssue
+) || list[0];
 
 const hasil =
 parseInt(latest.number);
